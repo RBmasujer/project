@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Room | Dear Self</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body class="chat-body">
+    <div class="chat-container">
+        <!-- Chat Sidebar -->
+        <aside class="chat-sidebar">
+            <div class="chat-sidebar-header">
+                <a href="landing-page.html" class="logo">
+                    <span class="logo-icon">✿</span>
+                    <span class="logo-text">Dear Self</span>
+                </a>
+            </div>
+
+            <div class="chat-user-info">
+                <img src="https://images.pexels.com/photos/3992658/pexels-photo-3992658.jpeg" alt="User" class="chat-avatar" id="currentUserAvatar">
+                <div class="chat-user-details">
+                    <span class="chat-user-name" id="currentUserName">Guest</span>
+                    <span class="chat-user-status online">Online</span>
+                </div>
+            </div>
+
+            <div class="chat-rooms">
+                <h4>Chat Rooms</h4>
+                <ul id="roomsList">
+                    <li class="active" data-room="general">
+                        <i class="fas fa-globe"></i>
+                        <span>General</span>
+                        <span class="unread-badge" id="generalUnread">0</span>
+                    </li>
+                    <li data-room="staff">
+                        <i class="fas fa-users"></i>
+                        <span>Staff</span>
+                        <span class="unread-badge" id="staffUnread">0</span>
+                    </li>
+                    <li data-room="support">
+                        <i class="fas fa-headset"></i>
+                        <span>Support</span>
+                        <span class="unread-badge" id="supportUnread">0</span>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="online-users">
+                <h4>Online Users</h4>
+                <ul id="onlineUsersList">
+                    <!-- Loaded dynamically -->
+                </ul>
+            </div>
+
+            <div class="chat-sidebar-footer">
+                <button class="btn btn-outline btn-block" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </aside>
+
+        <!-- Chat Main Area -->
+        <main class="chat-main">
+            <!-- Chat Header -->
+            <header class="chat-header">
+                <button class="mobile-chat-toggle" id="mobileChatToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="chat-room-info">
+                    <h2 id="currentRoomName">General</h2>
+                    <span id="currentRoomMembers">0 members online</span>
+                </div>
+                <div class="chat-header-actions">
+                    <button class="btn btn-icon" id="searchMessages">
+                        <i class="fas fa-search"></i>
+                    </button>
+                    <button class="btn btn-icon" id="chatSettings">
+                        <i class="fas fa-cog"></i>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Messages Area -->
+            <div class="chat-messages" id="chatMessages">
+                <!-- Messages loaded dynamically -->
+                <div class="messages-loading">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>Loading messages...</p>
+                </div>
+            </div>
+
+            <!-- Message Input -->
+            <div class="chat-input-area">
+                <div class="chat-input-wrapper">
+                    <button class="btn btn-icon" id="attachFile">
+                        <i class="fas fa-paperclip"></i>
+                    </button>
+                    <input type="text" id="messageInput" placeholder="Type a message..." autocomplete="off">
+                    <button class="btn btn-icon" id="emojiBtn">
+                        <i class="fas fa-smile"></i>
+                    </button>
+                    <button class="btn btn-primary" id="sendMessageBtn">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </main>
+
+        <!-- Chat Info Panel (Right Sidebar) -->
+        <aside class="chat-info-panel" id="chatInfoPanel">
+            <div class="info-panel-header">
+                <h3>Room Info</h3>
+                <button class="btn btn-icon close-panel" id="closeInfoPanel">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="info-panel-body">
+                <div class="room-details">
+                    <div class="room-icon">
+                        <i class="fas fa-globe" id="roomIcon"></i>
+                    </div>
+                    <h4 id="roomTitle">General</h4>
+                    <p id="roomDescription">Public chat room for all users</p>
+                </div>
+
+                <div class="room-members-section">
+                    <h5>Members</h5>
+                    <ul id="roomMembersList">
+                        <!-- Loaded dynamically -->
+                    </ul>
+                </div>
+
+                <div class="shared-files">
+                    <h5>Shared Files</h5>
+                    <ul id="sharedFilesList">
+                        <li class="empty-state">
+                            <p>No files shared yet</p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Emoji Picker -->
+    <div class="emoji-picker" id="emojiPicker">
+        <div class="emoji-categories">
+            <button class="category-btn active" data-category="smileys">
+                <i class="fas fa-smile"></i>
+            </button>
+            <button class="category-btn" data-category="people">
+                <i class="fas fa-user"></i>
+            </button>
+            <button class="category-btn" data-category="nature">
+                <i class="fas fa-leaf"></i>
+            </button>
+            <button class="category-btn" data-category="food">
+                <i class="fas fa-utensils"></i>
+            </button>
+            <button class="category-btn" data-category="activities">
+                <i class="fas fa-futbol"></i>
+            </button>
+        </div>
+        <div class="emoji-grid" id="emojiGrid">
+            <!-- Emojis loaded dynamically -->
+        </div>
+    </div>
+
+    <!-- Search Panel -->
+    <div class="search-panel" id="searchPanel">
+        <div class="search-panel-header">
+            <input type="text" id="searchInput" placeholder="Search messages...">
+            <button class="btn btn-icon close-search" id="closeSearchPanel">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="search-results" id="searchResults">
+            <div class="empty-state">
+                <i class="fas fa-search"></i>
+                <p>Search for messages</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <div class="toast-content">
+            <i class="fas fa-check-circle"></i>
+            <span id="toastMessage">Message</span>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/script.js"></script>
+</body>
+</html>

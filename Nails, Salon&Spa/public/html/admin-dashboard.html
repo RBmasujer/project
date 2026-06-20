@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Dear Self</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body class="dashboard-body">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <a href="landing-page.html" class="logo">
+                <span class="logo-icon">✿</span>
+                <span class="logo-text">Dear Self</span>
+            </a>
+        </div>
+        <nav class="sidebar-nav">
+            <ul>
+                <li class="active">
+                    <a href="#overview"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a>
+                </li>
+                <li>
+                    <a href="#appointments"><i class="fas fa-calendar-check"></i> <span>Appointments</span></a>
+                </li>
+                <li>
+                    <a href="#staff"><i class="fas fa-users-cog"></i> <span>Staff Management</span></a>
+                </li>
+                <li>
+                    <a href="#services"><i class="fas fa-spa"></i> <span>Services</span></a>
+                </li>
+                <li>
+                    <a href="#customers"><i class="fas fa-users"></i> <span>Customers</span></a>
+                </li>
+                <li>
+                    <a href="#reports"><i class="fas fa-chart-bar"></i> <span>Reports</span></a>
+                </li>
+                <li>
+                    <a href="#feedback"><i class="fas fa-star"></i> <span>Reviews</span></a>
+                </li>
+                <li>
+                    <a href="#settings"><i class="fas fa-cog"></i> <span>Settings</span></a>
+                </li>
+                <li>
+                    <a href="chatroom.html"><i class="fas fa-comments"></i> <span>Chat</span></a>
+                </li>
+            </ul>
+        </nav>
+        <div class="sidebar-footer">
+            <button class="btn btn-outline btn-block" id="logoutBtn">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="dashboard-main">
+        <!-- Top Bar -->
+        <header class="topbar">
+            <button class="sidebar-toggle" id="sidebarToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="topbar-right">
+                <button class="notification-btn">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge" id="notifBadge">0</span>
+                </button>
+                <div class="user-menu">
+                    <img src="https://images.pexels.com/photos/3992658/pexels-photo-3992658.jpeg" alt="User" class="user-avatar" id="userAvatar">
+                    <div class="user-info">
+                        <span class="user-name" id="userName">Admin</span>
+                        <span class="user-role" id="userRole">Administrator</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Dashboard Content -->
+        <div class="dashboard-content">
+            <!-- Overview Section -->
+            <section class="dashboard-section active" id="overview">
+                <div class="section-header">
+                    <h1>Admin Dashboard</h1>
+                    <p>Business overview and analytics</p>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon blue">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="totalAppointments">0</span>
+                            <span class="stat-label">Total Appointments</span>
+                        </div>
+                        <span class="stat-trend up" id="appointmentsTrend">+0%</span>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon green">
+                            <i class="fas fa-dollar-sign"></i>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="totalRevenue">$0</span>
+                            <span class="stat-label">Total Revenue</span>
+                        </div>
+                        <span class="stat-trend up" id="revenueTrend">+0%</span>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon orange">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="totalCustomers">0</span>
+                            <span class="stat-label">Total Customers</span>
+                        </div>
+                        <span class="stat-trend up" id="customersTrend">+0%</span>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon teal">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="avgRating">0.0</span>
+                            <span class="stat-label">Avg Rating</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-grid three-col">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Revenue Overview</h3>
+                            <select id="revenuePeriod">
+                                <option value="week">This Week</option>
+                                <option value="month" selected>This Month</option>
+                                <option value="year">This Year</option>
+                            </select>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-container" id="revenueChart">
+                                <!-- Chart loaded dynamically -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Appointments by Service</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="service-breakdown" id="serviceBreakdown">
+                                <!-- Loaded dynamically -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Top Staff Performers</h3>
+                        </div>
+                        <div class="card-body" id="topStaff">
+                            <!-- Loaded dynamically -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Recent Bookings</h3>
+                            <a href="#appointments" class="view-all">View All</a>
+                        </div>
+                        <div class="card-body">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Customer</th>
+                                        <th>Service</th>
+                                        <th>Staff</th>
+                                        <th>Date</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="recentBookings">
+                                    <!-- Loaded dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Recent Reviews</h3>
+                            <a href="#feedback" class="view-all">View All</a>
+                        </div>
+                        <div class="card-body" id="recentReviews">
+                            <!-- Loaded dynamically -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Appointments Section -->
+            <section class="dashboard-section" id="appointments">
+                <div class="section-header">
+                    <h1>Appointments</h1>
+                    <div class="section-actions">
+                        <input type="date" id="appointmentDateFilter" class="date-input">
+                        <select id="appointmentStatusFilter">
+                            <option value="all">All Status</option>
+                            <option value="pending">Pending</option>
+                            <option value="confirmed">Confirmed</option>
+                            <option value="in_progress">In Progress</option>
+                            <option value="completed">Completed</option>
+                            <option value="cancelled">Cancelled</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="appointments-table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Customer</th>
+                                <th>Service</th>
+                                <th>Staff</th>
+                                <th>Date/Time</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="appointmentsTable">
+                            <!-- Loaded dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="pagination" id="appointmentsPagination">
+                    <!-- Pagination loaded dynamically -->
+                </div>
+            </section>
+
+            <!-- Staff Management Section -->
+            <section class="dashboard-section" id="staff">
+                <div class="section-header">
+                    <h1>Staff Management</h1>
+                    <button class="btn btn-primary" id="addStaffBtn">
+                        <i class="fas fa-plus"></i> Add Staff
+                    </button>
+                </div>
+
+                <div class="staff-grid" id="staffGrid">
+                    <!-- Loaded dynamically -->
+                </div>
+            </section>
+
+            <!-- Services Section -->
+            <section class="dashboard-section" id="services">
+                <div class="section-header">
+                    <h1>Services Management</h1>
+                    <button class="btn btn-primary" id="addServiceBtn">
+                        <i class="fas fa-plus"></i> Add Service
+                    </button>
+                </div>
+
+                <div class="services-table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Image</th>
+                                <th>Name</th>
+                                <th>Category</th>
+                                <th>Duration</th>
+                                <th>Price</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="servicesTable">
+                            <!-- Loaded dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Customers Section -->
+            <section class="dashboard-section" id="customers">
+                <div class="section-header">
+                    <h1>Customer Management</h1>
+                    <div class="section-actions">
+                        <div class="search-input">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="customerSearch" placeholder="Search customers...">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="customers-table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Total Appointments</th>
+                                <th>Total Spent</th>
+                                <th>Last Visit</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="customersTable">
+                            <!-- Loaded dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Reports Section -->
+            <section class="dashboard-section" id="reports">
+                <div class="section-header">
+                    <h1>Reports & Analytics</h1>
+                    <div class="section-actions">
+                        <select id="reportPeriod">
+                            <option value="week">This Week</option>
+                            <option value="month" selected>This Month</option>
+                            <option value="quarter">This Quarter</option>
+                            <option value="year">This Year</option>
+                        </select>
+                        <button class="btn btn-outline" id="exportReport">
+                            <i class="fas fa-download"></i> Export
+                        </button>
+                    </div>
+                </div>
+
+                <div class="reports-grid">
+                    <div class="card report-card">
+                        <div class="card-header">
+                            <h3>Revenue by Category</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="category-revenue" id="categoryRevenue">
+                                <!-- Loaded dynamically -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card report-card">
+                        <div class="card-header">
+                            <h3>Peak Hours</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="peak-hours" id="peakHours">
+                                <!-- Loaded dynamically -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card report-card">
+                        <div class="card-header">
+                            <h3>Customer Retention</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="retention-stats" id="retentionStats">
+                                <!-- Loaded dynamically -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card report-card">
+                        <div class="card-header">
+                            <h3>Staff Utilization</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="staff-utilization" id="staffUtilization">
+                                <!-- Loaded dynamically -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Feedback/Reviews Section -->
+            <section class="dashboard-section" id="feedback">
+                <div class="section-header">
+                    <h1>Customer Reviews</h1>
+                    <div class="section-actions">
+                        <select id="ratingFilter">
+                            <option value="all">All Ratings</option>
+                            <option value="5">5 Stars</option>
+                            <option value="4">4 Stars</option>
+                            <option value="3">3 Stars</option>
+                            <option value="2">2 Stars</option>
+                            <option value="1">1 Star</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="reviews-stats">
+                    <div class="review-stat">
+                        <span class="big-number" id="totalReviews">0</span>
+                        <span class="label">Total Reviews</span>
+                    </div>
+                    <div class="review-stat">
+                        <span class="big-number" id="avgReviewRating">0.0</span>
+                        <span class="label">Average Rating</span>
+                    </div>
+                    <div class="rating-breakdown" id="ratingBreakdown">
+                        <!-- Loaded dynamically -->
+                    </div>
+                </div>
+
+                <div class="reviews-list" id="reviewsList">
+                    <!-- Loaded dynamically -->
+                </div>
+            </section>
+
+            <!-- Settings Section -->
+            <section class="dashboard-section" id="settings">
+                <div class="section-header">
+                    <h1>Settings</h1>
+                    <p>Configure your salon settings</p>
+                </div>
+
+                <div class="settings-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Business Information</h3>
+                        </div>
+                        <div class="card-body">
+                            <form id="businessForm">
+                                <div class="form-group">
+                                    <label>Salon Name</label>
+                                    <input type="text" id="salonName" value="Dear Self">
+                                </div>
+                                <div class="form-group">
+                                    <label>Address</label>
+                                    <input type="text" id="salonAddress" value="123 Beauty Lane, Wellness City">
+                                </div>
+                                <div class="form-group">
+                                    <label>Phone</label>
+                                    <input type="text" id="salonPhone" value="(555) 123-4567">
+                                </div>
+                                <div class="form-group">
+                                    <label>Email</label>
+                                    <input type="email" id="salonEmail" value="hello@dearself.spa">
+                                </div>
+                                <button type="submit" class="btn btn-primary">Save Changes</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Business Hours</h3>
+                        </div>
+                        <div class="card-body">
+                            <form id="hoursForm">
+                                <div class="hours-grid" id="hoursGrid">
+                                    <div class="hours-row">
+                                        <label>Monday</label>
+                                        <input type="time" id="monOpen" value="09:00">
+                                        <span>to</span>
+                                        <input type="time" id="monClose" value="20:00">
+                                    </div>
+                                    <div class="hours-row">
+                                        <label>Tuesday</label>
+                                        <input type="time" id="tueOpen" value="09:00">
+                                        <span>to</span>
+                                        <input type="time" id="tueClose" value="20:00">
+                                    </div>
+                                    <div class="hours-row">
+                                        <label>Wednesday</label>
+                                        <input type="time" id="wedOpen" value="09:00">
+                                        <span>to</span>
+                                        <input type="time" id="wedClose" value="20:00">
+                                    </div>
+                                    <div class="hours-row">
+                                        <label>Thursday</label>
+                                        <input type="time" id="thuOpen" value="09:00">
+                                        <span>to</span>
+                                        <input type="time" id="thuClose" value="20:00">
+                                    </div>
+                                    <div class="hours-row">
+                                        <label>Friday</label>
+                                        <input type="time" id="friOpen" value="09:00">
+                                        <span>to</span>
+                                        <input type="time" id="friClose" value="20:00">
+                                    </div>
+                                    <div class="hours-row">
+                                        <label>Saturday</label>
+                                        <input type="time" id="satOpen" value="09:00">
+                                        <span>to</span>
+                                        <input type="time" id="satClose" value="18:00">
+                                    </div>
+                                    <div class="hours-row">
+                                        <label>Sunday</label>
+                                        <input type="time" id="sunOpen" value="10:00">
+                                        <span>to</span>
+                                        <input type="time" id="sunClose" value="16:00">
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Save Hours</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Add Staff Modal -->
+    <div class="modal" id="staffModal">
+        <div class="modal-content">
+            <button class="modal-close" id="staffModalClose">&times;</button>
+            <div class="modal-header">
+                <h2 id="staffModalTitle">Add Staff Member</h2>
+            </div>
+            <form id="staffForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <input type="text" id="staffName" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="staffEmail" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Phone</label>
+                        <input type="tel" id="staffPhone">
+                    </div>
+                    <div class="form-group">
+                        <label>Role</label>
+                        <select id="staffRoleSelect">
+                            <option value="staff">Staff</option>
+                            <option value="receptionist">Receptionist</option>
+                            <option value="admin">Admin</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Assign Services</label>
+                    <div class="checkbox-grid" id="staffServicesGrid">
+                        <!-- Loaded dynamically -->
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Save Staff</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Service Modal -->
+    <div class="modal" id="serviceModal">
+        <div class="modal-content">
+            <button class="modal-close" id="serviceModalClose">&times;</button>
+            <div class="modal-header">
+                <h2 id="serviceModalTitle">Add Service</h2>
+            </div>
+            <form id="serviceForm">
+                <div class="form-group">
+                    <label>Service Name</label>
+                    <input type="text" id="serviceName" required>
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="serviceDescription" rows="2"></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Category</label>
+                        <select id="serviceCategorySelect" required>
+                            <option value="hair">Hair</option>
+                            <option value="nails">Nails</option>
+                            <option value="spa">Spa</option>
+                            <option value="massage">Massage</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Duration (minutes)</label>
+                        <input type="number" id="serviceDuration" min="15" step="15" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Price ($)</label>
+                        <input type="number" id="servicePrice" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Image URL (optional)</label>
+                        <input type="url" id="serviceImage">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="serviceActive" checked>
+                        <span>Active</span>
+                    </label>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Save Service</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Confirm Delete Modal -->
+    <div class="modal" id="confirmModal">
+        <div class="modal-content modal-sm">
+            <button class="modal-close" id="confirmModalClose">&times;</button>
+            <div class="modal-header">
+                <h2>Confirm Action</h2>
+            </div>
+            <div class="modal-body">
+                <p id="confirmMessage">Are you sure you want to proceed?</p>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-outline" id="confirmCancel">Cancel</button>
+                <button class="btn btn-danger" id="confirmOk">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <div class="toast-content">
+            <i class="fas fa-check-circle"></i>
+            <span id="toastMessage">Message</span>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</body>
+</html>

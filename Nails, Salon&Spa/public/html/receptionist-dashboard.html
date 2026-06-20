@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Receptionist Dashboard | Dear Self</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body class="dashboard-body">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <a href="landing-page.html" class="logo">
+                <span class="logo-icon">✿</span>
+                <span class="logo-text">Dear Self</span>
+            </a>
+        </div>
+        <nav class="sidebar-nav">
+            <ul>
+                <li class="active">
+                    <a href="#overview"><i class="fas fa-home"></i> <span>Overview</span></a>
+                </li>
+                <li>
+                    <a href="#appointments"><i class="fas fa-calendar-check"></i> <span>Appointments</span></a>
+                </li>
+                <li>
+                    <a href="#walkins"><i class="fas fa-walking"></i> <span>Walk-ins</span></a>
+                </li>
+                <li>
+                    <a href="#schedule"><i class="fas fa-calendar-alt"></i> <span>Daily Schedule</span></a>
+                </li>
+                <li>
+                    <a href="#staff"><i class="fas fa-users"></i> <span>Staff Status</span></a>
+                </li>
+                <li>
+                    <a href="#customers"><i class="fas fa-user-friends"></i> <span>Customers</span></a>
+                </li>
+                <li>
+                    <a href="chatroom.html"><i class="fas fa-comments"></i> <span>Chat</span></a>
+                </li>
+            </ul>
+        </nav>
+        <div class="sidebar-footer">
+            <button class="btn btn-outline btn-block" id="logoutBtn">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="dashboard-main">
+        <!-- Top Bar -->
+        <header class="topbar">
+            <button class="sidebar-toggle" id="sidebarToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="topbar-center">
+                <div class="quick-actions">
+                    <button class="btn btn-primary" id="newAppointmentBtn">
+                        <i class="fas fa-plus"></i> New Appointment
+                    </button>
+                    <button class="btn btn-success" id="newWalkinBtn">
+                        <i class="fas fa-walking"></i> Walk-in
+                    </button>
+                </div>
+            </div>
+            <div class="topbar-right">
+                <button class="notification-btn">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge" id="notifBadge">0</span>
+                </button>
+                <div class="user-menu">
+                    <img src="https://images.pexels.com/photos/3992658/pexels-photo-3992658.jpeg" alt="User" class="user-avatar" id="userAvatar">
+                    <div class="user-info">
+                        <span class="user-name" id="userName">Receptionist</span>
+                        <span class="user-role" id="userRole">Front Desk</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Dashboard Content -->
+        <div class="dashboard-content">
+            <!-- Overview Section -->
+            <section class="dashboard-section active" id="overview">
+                <div class="section-header">
+                    <h1>Dashboard Overview</h1>
+                    <p id="currentDateDisplay">Today's activity at a glance</p>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card clickable" onclick="showSection('appointments')">
+                        <div class="stat-icon blue">
+                            <i class="fas fa-calendar-day"></i>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="todayAppointments">0</span>
+                            <span class="stat-label">Today's Appointments</span>
+                        </div>
+                    </div>
+                    <div class="stat-card clickable" onclick="showSection('walkins')">
+                        <div class="stat-icon green">
+                            <i class="fas fa-walking"></i>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="todayWalkins">0</span>
+                            <span class="stat-label">Walk-ins Today</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon orange">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="pendingCheckins">0</span>
+                            <span class="stat-label">Pending Check-ins</span>
+                        </div>
+                    </div>
+                    <div class="stat-card clickable" onclick="showSection('staff')">
+                        <div class="stat-icon teal">
+                            <i class="fas fa-user-check"></i>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="activeStaff">0</span>
+                            <span class="stat-label">Staff Available</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-grid three-col">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Today's Timeline</h3>
+                        </div>
+                        <div class="card-body timeline-scroll" id="todayTimeline">
+                            <!-- Loaded dynamically -->
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Waiting List</h3>
+                            <span class="badge" id="waitingCount">0</span>
+                        </div>
+                        <div class="card-body" id="waitingList">
+                            <div class="empty-state">
+                                <p>No one waiting</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Staff on Floor</h3>
+                        </div>
+                        <div class="card-body" id="staffOnFloor">
+                            <!-- Loaded dynamically -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Appointments Section -->
+            <section class="dashboard-section" id="appointments">
+                <div class="section-header">
+                    <h1>Appointments Management</h1>
+                    <div class="section-actions">
+                        <input type="date" id="appointmentDateFilter" class="date-input">
+                        <select id="appointmentStatusFilter">
+                            <option value="all">All Status</option>
+                            <option value="pending">Pending</option>
+                            <option value="confirmed">Confirmed</option>
+                            <option value="in_progress">In Progress</option>
+                            <option value="completed">Completed</option>
+                            <option value="cancelled">Cancelled</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="appointments-table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>Client</th>
+                                <th>Service</th>
+                                <th>Staff</th>
+                                <th>Duration</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="appointmentsTable">
+                            <!-- Loaded dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Walk-ins Section -->
+            <section class="dashboard-section" id="walkins">
+                <div class="section-header">
+                    <h1>Walk-in Management</h1>
+                    <button class="btn btn-primary" id="addWalkinBtn">
+                        <i class="fas fa-plus"></i> Add Walk-in
+                    </button>
+                </div>
+
+                <div class="walkin-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Current Walk-ins</h3>
+                            <span class="badge blue" id="currentWalkins">0</span>
+                        </div>
+                        <div class="card-body" id="currentWalkinsList">
+                            <!-- Loaded dynamically -->
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Waiting Queue</h3>
+                            <span class="badge orange" id="queueCount">0</span>
+                        </div>
+                        <div class="card-body" id="waitingQueueList">
+                            <!-- Loaded dynamically -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Daily Schedule Section -->
+            <section class="dashboard-section" id="schedule">
+                <div class="section-header">
+                    <h1>Daily Schedule</h1>
+                    <div class="section-actions">
+                        <input type="date" id="scheduleDate" class="date-input">
+                    </div>
+                </div>
+
+                <div class="schedule-view">
+                    <div class="schedule-columns" id="scheduleColumns">
+                        <!-- Loaded dynamically with staff columns -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Staff Status Section -->
+            <section class="dashboard-section" id="staff">
+                <div class="section-header">
+                    <h1>Staff Status</h1>
+                    <div class="section-actions">
+                        <select id="staffFilter">
+                            <option value="all">All Staff</option>
+                            <option value="available">Available</option>
+                            <option value="busy">Busy</option>
+                            <option value="off">Off</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="staff-status-grid" id="staffStatusGrid">
+                    <!-- Loaded dynamically -->
+                </div>
+            </section>
+
+            <!-- Customers Section -->
+            <section class="dashboard-section" id="customers">
+                <div class="section-header">
+                    <h1>Customer Management</h1>
+                    <div class="section-actions">
+                        <div class="search-input">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="customerSearch" placeholder="Search customers...">
+                        </div>
+                        <button class="btn btn-primary" id="addCustomerBtn">
+                            <i class="fas fa-plus"></i> Add Customer
+                        </button>
+                    </div>
+                </div>
+
+                <div class="customers-table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Total Visits</th>
+                                <th>Last Visit</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="customersTable">
+                            <!-- Loaded dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- New Appointment Modal -->
+    <div class="modal" id="newAppointmentModal">
+        <div class="modal-content modal-lg">
+            <button class="modal-close" id="newAppointmentModalClose">&times;</button>
+            <div class="modal-header">
+                <h2>New Appointment</h2>
+            </div>
+            <form id="newAppointmentForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Customer</label>
+                        <select id="appointmentCustomer" required>
+                            <option value="">Select Customer</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Or New Customer</label>
+                        <input type="text" id="appointmentNewCustomer" placeholder="Name for new customer">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Service</label>
+                        <select id="appointmentService" required>
+                            <option value="">Select Service</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Staff</label>
+                        <select id="appointmentStaff" required>
+                            <option value="">Any Available</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Date</label>
+                        <input type="date" id="appointmentDateInput" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Time</label>
+                        <select id="appointmentTimeSlot" required>
+                            <option value="">Select Date First</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Notes</label>
+                    <textarea id="appointmentNotesInput" rows="2" placeholder="Special requests..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Create Appointment</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Walk-in Modal -->
+    <div class="modal" id="walkinModal">
+        <div class="modal-content">
+            <button class="modal-close" id="walkinModalClose">&times;</button>
+            <div class="modal-header">
+                <h2>Add Walk-in</h2>
+            </div>
+            <form id="walkinForm">
+                <div class="form-group">
+                    <label>Customer Name</label>
+                    <input type="text" id="walkinName" placeholder="Customer name" required>
+                </div>
+                <div class="form-group">
+                    <label>Phone (Optional)</label>
+                    <input type="tel" id="walkinPhone" placeholder="Phone number">
+                </div>
+                <div class="form-group">
+                    <label>Service</label>
+                    <select id="walkinService" required>
+                        <option value="">Select Service</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Preferred Staff (Optional)</label>
+                    <select id="walkinStaff">
+                        <option value="">Any Available</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Priority</label>
+                    <select id="walkinPriority">
+                        <option value="normal">Normal</option>
+                        <option value="high">High Priority</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Add to Queue</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Customer Modal -->
+    <div class="modal" id="customerModal">
+        <div class="modal-content">
+            <button class="modal-close" id="customerModalClose">&times;</button>
+            <div class="modal-header">
+                <h2>Customer Details</h2>
+            </div>
+            <div class="modal-body" id="customerDetails">
+                <!-- Loaded dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Check-in Modal -->
+    <div class="modal" id="checkinModal">
+        <div class="modal-content">
+            <button class="modal-close" id="checkinModalClose">&times;</button>
+            <div class="modal-header">
+                <h2>Check-in Customer</h2>
+            </div>
+            <div class="modal-body" id="checkinDetails">
+                <!-- Loaded dynamically -->
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-success" id="confirmCheckin">
+                    <i class="fas fa-check"></i> Check In
+                </button>
+                <button class="btn btn-outline" id="cancelCheckin">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <div class="toast-content">
+            <i class="fas fa-check-circle"></i>
+            <span id="toastMessage">Message</span>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/script.js"></script>
+</body>
+</html>
