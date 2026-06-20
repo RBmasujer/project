@@ -121,6 +121,235 @@ async function logout() {
     window.location.href = 'landing-page.html';
 }
 
+// =====================================================
+// OAUTH AUTHENTICATION (Google & Facebook)
+// =====================================================
+
+// Google OAuth
+async function loginWithGoogle() {
+    try {
+        // Check if Supabase is configured
+        if (supabase) {
+            const { data, error } = await supabase.auth.signInWithOAuth({
+                provider: 'google',
+                options: {
+                    redirectTo: window.location.origin + '/customer-dashboard.html'
+                }
+            });
+            if (error) throw error;
+            return;
+        }
+
+        // Fallback: Demo OAuth or redirect to server OAuth
+        const useDemo = !window.OAUTH_CONFIG || window.OAUTH_CONFIG.google?.clientId === 'your-google-client-id';
+
+        if (useDemo) {
+            // Demo mode
+            const response = await fetch('/api/auth/oauth/demo', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ provider: 'google' })
+            });
+
+            const result = await response.json();
+            if (result.success) {
+                localStorage.setItem('auth_token', result.token);
+                currentUser = result.user;
+                showToast('Logged in with Google!', 'success');
+                closeModal('loginModal');
+                redirectBasedOnRole(result.user.role);
+            } else {
+                throw new Error(result.error);
+            }
+        } else {
+            // Redirect to server OAuth flow
+            window.location.href = '/api/auth/google?redirect=/customer';
+        }
+    } catch (error) {
+        console.error('Google login error:', error);
+        showToast(error.message || 'Google login failed', 'error');
+    }
+}
+
+// Facebook OAuth
+async function loginWithFacebook() {
+    try {
+        // Check if Supabase is configured
+        if (supabase) {
+            const { data, error } = await supabase.auth.signInWithOAuth({
+                provider: 'facebook',
+                options: {
+                    redirectTo: window.location.origin + '/customer-dashboard.html'
+                }
+            });
+            if (error) throw error;
+            return;
+        }
+
+        // Fallback: Demo OAuth or redirect to server OAuth
+        const useDemo = !window.OAUTH_CONFIG || window.OAUTH_CONFIG.facebook?.appId === 'your-facebook-app-id';
+
+        if (useDemo) {
+            // Demo mode
+            const response = await fetch('/api/auth/oauth/demo', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ provider: 'facebook' })
+            });
+
+            const result = await response.json();
+            if (result.success) {
+                localStorage.setItem('auth_token', result.token);
+                currentUser = result.user;
+                showToast('Logged in with Facebook!', 'success');
+                closeModal('loginModal');
+                redirectBasedOnRole(result.user.role);
+            } else {
+                throw new Error(result.error);
+            }
+        } else {
+            // Redirect to server OAuth flow
+            window.location.href = '/api/auth/facebook?redirect=/customer';
+        }
+    } catch (error) {
+        console.error('Facebook login error:', error);
+        showToast(error.message || 'Facebook login failed', 'error');
+    }
+}
+
+// Handle OAuth callback (when returning from OAuth provider)
+async function handleOAuthCallback() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get('token');
+    const oauth = urlParams.get('oauth');
+
+    if (token && oauth) {
+        localStorage.setItem('auth_token', token);
+
+        // Clean URL
+        window.history.replaceState({}, document.title, window.location.pathname);
+
+        showToast(`Logged in with ${oauth.charAt(0).toUpperCase() + oauth.slice(1)}!`, 'success');
+
+        // Check if Supabase session needs to be set
+        if (supabase) {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session) {
+                // Set session from token
+                const decoded = parseJwt(token);
+                currentUser = {
+                    id: decoded.id,
+                    email: decoded.email,
+                    role: decoded.role
+                };
+            }
+        }
+
+        return true;
+    }
+    return false;
+}
+
+// Parse JWT token
+function parseJwt(token) {
+    try {
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(atob(base64).split('').map(c => {
+            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+        return JSON.parse(jsonPayload);
+    } catch (e) {
+        return null;
+    }
+}
+
+// Initialize Google Sign-In SDK
+function initGoogleSignIn() {
+    if (window.google && window.google.accounts) {
+        google.accounts.id.initialize({
+            client_id: window.OAUTH_CONFIG?.google?.clientId,
+            callback: async (response) => {
+                if (response.credential) {
+                    try {
+                        const result = await fetch('/api/auth/oauth/token', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                provider: 'google',
+                                idToken: response.credential
+                            })
+                        });
+
+                        const data = await result.json();
+                        if (data.success) {
+                            localStorage.setItem('auth_token', data.token);
+                            currentUser = data.user;
+                            showToast('Logged in with Google!', 'success');
+                            closeModal('loginModal');
+                            redirectBasedOnRole(data.user.role);
+                        }
+                    } catch (error) {
+                        showToast('Google login failed', 'error');
+                    }
+                }
+            }
+        });
+    }
+}
+
+// Facebook SDK initialization
+function initFacebookSDK() {
+    if (window.FB) {
+        FB.init({
+            appId: window.OAUTH_CONFIG?.facebook?.appId,
+            cookie: true,
+            xfbml: true,
+            version: 'v18.0'
+        });
+    }
+}
+
+// Facebook login with SDK
+async function facebookLoginWithSDK() {
+    if (!window.FB) {
+        return loginWithFacebook(); // Fallback to server OAuth
+    }
+
+    return new Promise((resolve, reject) => {
+        FB.login(async (response) => {
+            if (response.authResponse) {
+                try {
+                    const result = await fetch('/api/auth/oauth/token', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            provider: 'facebook',
+                            accessToken: response.authResponse.accessToken
+                        })
+                    });
+
+                    const data = await result.json();
+                    if (data.success) {
+                        localStorage.setItem('auth_token', data.token);
+                        currentUser = data.user;
+                        showToast('Logged in with Facebook!', 'success');
+                        closeModal('loginModal');
+                        redirectBasedOnRole(data.user.role);
+                        resolve(data);
+                    } else {
+                        reject(new Error(data.error));
+                    }
+                } catch (error) {
+                    reject(error);
+                }
+            } else {
+                reject(new Error('Facebook login cancelled'));
+            }
+        }, { scope: 'email,public_profile' });
+    });
+}
+
 function redirectBasedOnRole(role) {
     const pages = {
         customer: 'customer-dashboard.html',
@@ -923,6 +1152,9 @@ function sendMessage() {
 // COMMON FUNCTIONS
 // =====================================================
 function setupCommonEvents() {
+    // Handle OAuth callback if present
+    handleOAuthCallback();
+
     // Mobile menu
     const mobileMenuBtn = document.getElementById('mobileMenuBtn');
     const navLinks = document.getElementById('navLinks');
@@ -956,6 +1188,17 @@ function setupCommonEvents() {
     if (loginBtn) loginBtn.addEventListener('click', () => openModal('loginModal'));
     if (registerBtn) registerBtn.addEventListener('click', () => openModal('registerModal'));
     if (heroBookBtn) heroBookBtn.addEventListener('click', openBookingModal);
+
+    // OAuth buttons
+    const googleLoginBtn = document.getElementById('googleLoginBtn');
+    const facebookLoginBtn = document.getElementById('facebookLoginBtn');
+    const googleRegisterBtn = document.getElementById('googleRegisterBtn');
+    const facebookRegisterBtn = document.getElementById('facebookRegisterBtn');
+
+    if (googleLoginBtn) googleLoginBtn.addEventListener('click', loginWithGoogle);
+    if (facebookLoginBtn) facebookLoginBtn.addEventListener('click', loginWithFacebook);
+    if (googleRegisterBtn) googleRegisterBtn.addEventListener('click', loginWithGoogle);
+    if (facebookRegisterBtn) facebookRegisterBtn.addEventListener('click', loginWithFacebook);
 
     // Modal closes
     document.querySelectorAll('.modal-close').forEach(btn => {

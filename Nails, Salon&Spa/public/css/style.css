@@ -1252,6 +1252,76 @@ p {
 }
 
 /* =====================================================
+   OAUTH BUTTONS
+   ===================================================== */
+.oauth-divider {
+    display: flex;
+    align-items: center;
+    margin: 20px 0;
+    color: var(--text-light);
+    font-size: 0.85rem;
+}
+
+.oauth-divider::before,
+.oauth-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border-light);
+}
+
+.oauth-divider span {
+    padding: 0 16px;
+}
+
+.oauth-buttons {
+    display: flex;
+    gap: 12px;
+}
+
+.btn-oauth {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 16px;
+    background: var(--bg-white);
+    border: 1px solid var(--border-medium);
+    border-radius: var(--radius);
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.btn-oauth:hover {
+    background: var(--bg-lighter);
+    border-color: var(--text-light);
+}
+
+.btn-oauth svg {
+    flex-shrink: 0;
+}
+
+.btn-google {
+    color: var(--text-dark);
+}
+
+.btn-google:hover {
+    background: #f8f9fa;
+}
+
+.btn-facebook {
+    color: #1877F2;
+}
+
+.btn-facebook:hover {
+    background: #f0f7ff;
+    border-color: #1877F2;
+}
+
+/* =====================================================
    FOOTER
    ===================================================== */
 .footer {

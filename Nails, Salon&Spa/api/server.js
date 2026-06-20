@@ -13,6 +13,7 @@ const http = require('http');
 const auth = require('./auth');
 const middleware = require('./middleware');
 const dashboardController = require('./dashboard-controller');
+const oauth = require('./oauth');
 
 const app = express();
 const server = http.createServer(app);
@@ -26,6 +27,10 @@ app.use(cors({
 }));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// Cookie parser for OAuth
+const cookieParser = require('cookie-parser');
+app.use(cookieParser());;
 
 // Security headers
 app.use(middleware.securityHeadersMiddleware);
@@ -108,6 +113,29 @@ app.get('/api/auth/me', auth.authMiddleware, auth.handleGetCurrentUser);
 app.put('/api/auth/password', auth.authMiddleware, middleware.validateLoginInput, auth.handleUpdatePassword);
 app.post('/api/auth/reset-request', middleware.handlePasswordResetRequest);
 app.post('/api/auth/reset-complete', middleware.handlePasswordResetComplete);
+
+// =====================================================
+// OAUTH ROUTES (Google & Facebook)
+// =====================================================
+// Get OAuth configuration
+app.get('/api/auth/oauth/config', oauth.getOAuthConfig);
+
+// Token-based OAuth login (for frontend SDK)
+app.post('/api/auth/oauth/token',
+    middleware.loginLimiter,
+    oauth.handleOAuthTokenLogin
+);
+
+// Demo OAuth (for testing)
+app.post('/api/auth/oauth/demo', oauth.handleDemoOAuth);
+
+// Google OAuth flow
+app.get('/api/auth/google', oauth.handleGoogleAuth);
+app.get('/api/auth/google/callback', oauth.handleGoogleCallback);
+
+// Facebook OAuth flow
+app.get('/api/auth/facebook', oauth.handleFacebookAuth);
+app.get('/api/auth/facebook/callback', oauth.handleFacebookCallback);
 
 // =====================================================
 // BOOKING ROUTES (with double-booking prevention)
