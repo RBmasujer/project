@@ -303,7 +303,7 @@ async function loadTestimonials() {
 
     try {
         const { data: reviews } = await supabase?.from('feedback')
-            .select('*, users(full_name)'))
+            .select('*, users(full_name)')
             .order('created_at', { ascending: false })
             .limit(6) || { data: null };
 
