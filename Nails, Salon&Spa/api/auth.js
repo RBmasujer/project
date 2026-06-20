@@ -277,6 +277,96 @@ async function handlePasswordResetComplete(req, res) {
     }
 }
 
+/**
+ * Direct login handler (for use with middleware)
+ */
+async function handleLoginDirect(email, password) {
+    if (!email || !password) {
+        return { error: 'Email and password required' };
+    }
+
+    try {
+        // Demo user for testing
+        const demoUsers = {
+            'admin@dearself.spa': { id: 'admin-1', email, full_name: 'Admin User', role: 'admin', password_hash: await hashPassword('admin123') },
+            'staff@dearself.spa': { id: 'staff-1', email, full_name: 'Staff User', role: 'staff', password_hash: await hashPassword('staff123') },
+            'receptionist@dearself.spa': { id: 'reception-1', email, full_name: 'Receptionist User', role: 'receptionist', password_hash: await hashPassword('reception123') },
+            'customer@dearself.spa': { id: 'customer-1', email, full_name: 'Customer User', role: 'customer', password_hash: await hashPassword('customer123') },
+            'demo@example.com': { id: 'demo-1', email, full_name: 'Demo User', role: 'customer', password_hash: await hashPassword('demo123') }
+        };
+
+        const user = demoUsers[email.toLowerCase()];
+
+        if (!user) {
+            return { error: 'Invalid credentials' };
+        }
+
+        // For demo, any password that includes '123' works
+        const validPassword = password.includes('123');
+
+        if (!validPassword) {
+            return { error: 'Invalid credentials' };
+        }
+
+        const token = generateToken(user);
+
+        return {
+            success: true,
+            message: 'Login successful',
+            user: {
+                id: user.id,
+                email: user.email,
+                full_name: user.full_name,
+                role: user.role
+            },
+            token
+        };
+    } catch (error) {
+        console.error('Login error:', error);
+        return { error: 'Internal server error' };
+    }
+}
+
+/**
+ * Direct register handler (for use with middleware)
+ */
+async function handleRegisterDirect({ email, password, full_name, phone, role }) {
+    if (!email || !password || !full_name) {
+        return { error: 'Missing required fields' };
+    }
+
+    try {
+        const userId = `user-${Date.now()}`;
+        const password_hash = await hashPassword(password);
+
+        const newUser = {
+            id: userId,
+            email: email.toLowerCase(),
+            full_name,
+            phone,
+            role: role || 'customer',
+            created_at: new Date()
+        };
+
+        const token = generateToken(newUser);
+
+        return {
+            success: true,
+            message: 'Registration successful',
+            user: {
+                id: newUser.id,
+                email: newUser.email,
+                full_name: newUser.full_name,
+                role: newUser.role
+            },
+            token
+        };
+    } catch (error) {
+        console.error('Register error:', error);
+        return { error: 'Internal server error' };
+    }
+}
+
 // Export functions
 module.exports = {
     hashPassword,
@@ -287,6 +377,8 @@ module.exports = {
     requireRole,
     handleLogin,
     handleRegister,
+    handleLoginDirect,
+    handleRegisterDirect,
     handleLogout,
     handleGetCurrentUser,
     handleUpdatePassword,
