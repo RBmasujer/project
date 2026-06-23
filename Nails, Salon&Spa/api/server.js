@@ -30,7 +30,7 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Cookie parser for OAuth
 const cookieParser = require('cookie-parser');
-app.use(cookieParser());;
+app.use(cookieParser());
 
 // Security headers
 app.use(middleware.securityHeadersMiddleware);
